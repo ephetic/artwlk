@@ -37,9 +37,9 @@ export default class SiteSection extends React.Component {
     // if on /sites/map/:siteId
     if (this.props.params.siteId) {
       this.props.getCurrSite(this.props.params.siteId)
-        .then(() => {
-          this.props.setCurrMap('singleSite');
-        });
+      .then(() => {
+        this.props.setCurrMap('singleSite');
+      });
     }
 
     // if on /sites/:siteId
@@ -75,7 +75,7 @@ export default class SiteSection extends React.Component {
         <TopBarSection
           title={this.props.currSite.name}
           leftName="Back"
-          leftRoute="sites"
+          leftRoute="$back"
           rightName="Details"
           rightRoute={mapDetailRoute}
         />
@@ -84,7 +84,7 @@ export default class SiteSection extends React.Component {
         <TopBarSection
           title={this.props.currSite.name}
           leftName="Back"
-          leftRoute="sites"
+          leftRoute="$back"
           rightName="Map"
           rightRoute={siteDetailRoute}
         />
@@ -130,6 +130,7 @@ SiteSection.propTypes = {
   setCurrMap: React.PropTypes.func.isRequired,
   getCurrSite: React.PropTypes.func.isRequired,
   currSite: React.PropTypes.object.isRequired,
+  currMap: React.PropTypes.string.isRequired,
   sites: React.PropTypes.array.isRequired,
   doSearch: React.PropTypes.func.isRequired,
   doFilterSearch: React.PropTypes.func.isRequired,

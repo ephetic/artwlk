@@ -12,7 +12,11 @@ export default class TopBarButton extends React.Component {
   handleClick(event) {
     if (this.props.route) {
       const router = this.context.router;
-      router.transitionTo(event.target.dataset.route);
+      if (this.props.route === '$back') {
+        router.goBack();
+      } else {
+        router.transitionTo(event.target.dataset.route);
+      }
     } else {
       this.props.click();
     }

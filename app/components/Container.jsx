@@ -18,7 +18,7 @@ export default class Container extends React.Component {
       origin: new google.maps.LatLng(34.04935261524454, -118.24610710144043),
       sites: [],
       tours: [],
-      currMap: null,
+      currMap: 'all',
       currSite: {},
       currTour: {},
       childMapPosition: null,
@@ -58,6 +58,9 @@ export default class Container extends React.Component {
 
   componentDidMount() {
     this.doSearch({});
+    if (this.props.path === '/') {
+      this.context.router.transitionTo('nearby');
+    }
   }
 
   onMarkerClick(clickedMarker) {
@@ -308,4 +311,8 @@ export default class Container extends React.Component {
 
 Container.propTypes = {
   path: React.PropTypes.string,
+};
+
+Container.contextTypes = {
+  router: React.PropTypes.func.isRequired,
 };

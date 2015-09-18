@@ -27,6 +27,25 @@ export default class TourSection extends React.Component {
     this.closeModal = this.closeModal.bind(this);
   }
 
+  componentWillMount() {
+    // if on /tours/map
+    if (this.props.path === '/tours'
+      || this.props.path === '/tours/map'
+      || this.props.path === '/tours/map/') {
+      this.props.setCurrMap('allTours');
+    }
+
+    // if on /tours/map/:tourId
+    if (this.props.params.tourId) {
+      this.props.getCurrSite(this.props.params.tourId)
+        .then(() => {
+          this.props.setCurrMap('singleTour');
+        });
+    }
+
+    // if on /tours/:tourId
+  }
+
   componentDidMount() {
     getLocation().then(this.props.getSites);
     this.props.getCurrSite(this.props.params.siteId);
@@ -114,6 +133,7 @@ export default class TourSection extends React.Component {
 }
 
 TourSection.propTypes = {
+  setCurrMap: React.PropTypes.func.isRequired,
   getSites: React.PropTypes.func.isRequired,
   sites: React.PropTypes.array.isRequired,
   getCurrSite: React.PropTypes.func.isRequired,

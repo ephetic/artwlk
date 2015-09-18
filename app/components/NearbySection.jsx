@@ -1,4 +1,5 @@
 import React from 'react';
+// import {RouteHandler} from 'react-router';
 import TopBarSection from './TopBarSection';
 import Modal from 'react-modal';
 import FilterSection from './FilterSection';
@@ -23,6 +24,10 @@ export default class NearbySection extends React.Component {
     };
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.setCurrMap('all');
   }
 
   openModal(modalContent) {
@@ -57,25 +62,32 @@ export default class NearbySection extends React.Component {
           <button onClick={this.routeTo.bind(this, 'tours')}>Tours</button>
           <button onClick={this.routeTo.bind(this, 'sites')}>Sites</button>
         </div>
-        <h2>Sites</h2>
-        <SiteList
-          limit="2"
-          {...this.state}
-          {...this.props}
-        />
-        <h2>Tours</h2>
-        <TourList
-          limit="2"
-          {...this.state}
-          {...this.props}
-        />
-        <Modal
-          isOpen={this.state.modalIsOpen}
-          onRequestClose={this.closeModal}
-        >
-          {this.state.modalContent}
-        </Modal>
-      </div>
+
+          {/*
+          <RouteHandler
+            {...this.state}
+            {...this.props}
+          />
+          */}
+          <h2>Sites</h2>
+          <SiteList
+            limit="2"
+            {...this.state}
+            {...this.props}
+          />
+          <h2>Tours</h2>
+          <TourList
+            limit="2"
+            {...this.state}
+            {...this.props}
+          />
+          <Modal
+            isOpen={this.state.modalIsOpen}
+            onRequestClose={this.closeModal}
+          >
+            {this.state.modalContent}
+          </Modal>
+        </div>
     );
   }
 }
@@ -85,6 +97,7 @@ NearbySection.contextTypes = {
 };
 
 NearbySection.propTypes = {
+  setCurrMap: React.PropTypes.func.isRequired,
   getSites: React.PropTypes.func.isRequired,
   getCurrSite: React.PropTypes.func.isRequired,
   doSearch: React.PropTypes.func.isRequired,

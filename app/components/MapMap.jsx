@@ -1,6 +1,5 @@
 import React from 'react';
-import {GoogleMap, Marker, InfoWindow} from 'react-google-maps';
-// import {GoogleMap, Marker, InfoWindow, DirectionsRenderer} from 'react-google-maps';
+import {GoogleMap, Marker, InfoWindow, DirectionsRenderer} from 'react-google-maps';
 // import {getLocation} from '../utils/geo';
 
 // styles
@@ -9,102 +8,62 @@ import '../styles/components/MapSection';
 export default class MapMap extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      directions: null,
-      markers: null,
+      directions: [],
+      markers: [],
     };
-
+    setTimeout(this.onComponentDidMount.bind(this), 0);
     // this.onMapClick = this.onMapClick.bind(this);
     this.renderInfoWindow = this.renderInfoWindow.bind(this);
+    this.renderSingleSite = this.renderSingleSite.bind(this);
+    this.renderSingleTour = this.renderSingleTour.bind(this);
   }
 
-  // componentWillMount() {
-  //   console.log('[MapMap] WILL MOUNT', this.props.currMap);
-  //   this.renderMap();
-  // }
+  componentWillReceiveProps(props) {
+    if (
+      this.props.currMap !== props.currMap ||
+      this.props.sites.length !== props.sites.length ||
+      this.props.tours.length !== props.tours.length ||
+      this.props.currTour !== props.currTour ||
+      this.props.currSite !== props.currSite
+    ) this.renderMap(props);
+  }
 
-  // onMapClick(event) {
-  //   this.props.getSites({
-  //     coords: {
-  //       latitude: event.latLng.G,
-  //       longitude: event.latLng.K,
-  //     },
-  //   });
-  // }
+  onComponentDidMount() {
+    console.log('onComponentDidMount');
+    this.renderMap(this.props);
+  }
 
-  renderMap() {
-    let markers = [];
-    if (this.props.currMap === 'allSites' || this.props.currMap === 'singleSite') {
-      const sites = this.props.currMap === 'singleSite' ? [this.props.currSite] : this.props.sites;
+  onComponentWillMount() {
+    console.log('onComponentWillMount');
+    this.renderMap(this.props);
+  }
 
-      markers = sites.map((site, index) => {
-        // console.log('MARKER SITE!!!!', site);
-        const ref = `marker_${index}`;
-        const marker = {
-          showInfo: site.showInfo,
-          icon: this.props.iconSets(site.category),
-          position: {
-            lat: site.coords.latitude,
-            lng: site.coords.longitude,
-          },
-          id: site.id,
-          defaultAnimation: 2,
-        };
-
-        return (
-          <Marker
-            {...marker}
-            onClick={this.props.onMarkerClick.bind(this, site)}>
-            {marker.showInfo ? this.renderInfoWindow(ref, site) : null}
-          </Marker>
-        );
-      });
+  renderMap(props) {
+    // if route matches single tour or site, do that, else do tours, sites, or both
+    const route = props.routes[props.routes.length - 1];
+    if (route.path.match('nearby') || route.path.match('sites')) {
+      const sites = route.paramNames.indexOf('siteId') !== -1 ? [props.currSite] : props.sites;
+      this.setState({markers: sites.map(this.renderSingleSite)});
     }
-    return markers;
-    // render a tour or all tours
-    // if (currMap.tours.length) {
-    //   let toursArr = [];
-    // }
-
-    // {this.props.params.siteId ? this.renderSingleSite() : null}
-    // {this.props.params.tourId ? this.renderSingleTour() : null}
-    // {this.props.path === '/nearby/map' || this.props.path === '/sites/map' ? this.renderAllSites() : null}
-    // {this.props.path === '/tours/map' ? this.renderAllTours() : null}
-    // {this.state.directions ? <DirectionsRenderer directions={this.state.directions} /> : null}
-
-    // if (this.props.allSitesAndTours) {
-    //   this.setState({
-    //     markers: TODO,
-    //   });
-    // }
-
-    // // render all sites and tours if on /nearby/map
-    // if (this.props.path === '/nearby/map') {
-    //   getLocation().then(() => {
-    //     this.renderAllSites();
-    //     // this.renderAllTours();
-    //   });
-    // }
-    // // render all sites if on /sites/map
-    // if (this.props.path === '/sites/map') {
-    //   this.renderAllSites();
-    // }
-    // // render all tours if on /tours/map
-    // if (this.props.path === '/tours/map') {
-    //   this.renderAllTours();
-    // }
-  } // renderMap
-
-  renderSingleSite() {
-    this.props.getCurrSite(this.props.params.siteId);
-
-    if (!Object.keys(this.props.currSite).length) {
-      return null;
+    if (route.path.match('nearby') || route.path.match('tours')) {
+      const tours = route.paramNames.indexOf('tourId') !== -1 ? [props.currTour] : props.tours;
+      this.setState({directions: []}, () => tours.forEach(this.renderSingleTour));
     }
-    const site = this.props.currSite;
+    // if (props.currMap === 'all' || props.currMap === 'allSites' || props.currMap === 'singleSite') {
+    //   const sites = props.currMap === 'singleSite' ? [props.currSite] : props.sites;
+    //   this.setState({markers: sites.map(this.renderSingleSite)});
+    // }
+    // if (props.currMap === 'all' || props.currMap === 'allTours' || props.currMap === 'singleTour') {
+    //   const tours = props.currMap === 'singleTour' ? [props.currTour] : props.tours;
+    //   this.setState({directions: []}, () => tours.forEach(this.renderSingleTour));
+    // }
+  }
+
+  renderSingleSite(site) {
     const marker = {
       siteInfo: site,
+      icon: this.props.iconSets(site.category),
       position: {
         lat: site.coords.latitude,
         lng: site.coords.longitude,
@@ -122,43 +81,34 @@ export default class MapMap extends React.Component {
     );
   }
 
-  renderAllTours() {
-    // this.props.getTours();
-
-    // TODO: render all the start points of the tours
-  }
-
-  renderSingleTour() {
+  renderSingleTour(tour) {
     const DirectionsService = new google.maps.DirectionsService();
-    const _tour = this.props.tours.find(t => t.id === this.props.params.tourId);
-    let routeArr = [];
+    const route = tour.sites.map((siteObj) => {
+      const {latitude, longitude} = siteObj.coords;
+      return {
+        location: new google.maps.LatLng(latitude, longitude),
+        stopover: true,
+      };
+    });
 
-    if (_tour) {
-      routeArr = _tour.sites.map((siteObj) => {
-        const {latitude, longitude} = siteObj.coords;
+    const first = route.shift();
+    const last = route.length ? route.pop() : first;
 
-        return {
-          location: new google.maps.LatLng(latitude, longitude),
-          stopover: true,
-        };
-      });
-
-      DirectionsService.route({
-        origin: routeArr.shift().location,
-        destination: routeArr.pop().location,
-        travelMode: google.maps.TravelMode.WALKING,
-        optimizeWaypoints: true,
-        waypoints: routeArr,
-      }, (result, status) => {
-        if (status === google.maps.DirectionsStatus.OK) {
-          this.setState({
-            directions: result,
-          });
-        } else {
-          console.error(`error fetching directions ${ status }`);  // eslint-disable-line no-console
-        }
-      });
-    }
+    DirectionsService.route({
+      origin: first.location,
+      destination: last.location,
+      travelMode: google.maps.TravelMode.WALKING,
+      optimizeWaypoints: true,
+      waypoints: route,
+    }, (result, status) => {
+      if (status === google.maps.DirectionsStatus.OK) {
+        this.setState({
+          directions: this.state.directions.concat(<DirectionsRenderer directions={result} />),
+        });
+      } else {
+        console.log(`error fetching directions ${ status }`);  // eslint-disable-line no-console
+      }
+    });
   }
 
   renderInfoWindow(marker) {
@@ -181,7 +131,6 @@ export default class MapMap extends React.Component {
   }
 
   render() {
-    const markers = this.renderMap();
     return (
       <div className="MapSection">
         <GoogleMap
@@ -198,7 +147,8 @@ export default class MapMap extends React.Component {
           defaultZoom={12}
           defaultCenter={{lat: 34.0147601, lng: -118.4934095}}
         >
-          {markers}
+          {this.state.markers}
+          {this.state.directions}
         </GoogleMap>
       </div>
     );
@@ -218,6 +168,6 @@ MapMap.propTypes = {
   getCurrSite: React.PropTypes.func.isRequired,
   currSite: React.PropTypes.object,
   currTour: React.PropTypes.object,
-  currMap: React.PropTypes.object,
+  currMap: React.PropTypes.string,
   setMarkers: React.PropTypes.func.isRequired,
 };

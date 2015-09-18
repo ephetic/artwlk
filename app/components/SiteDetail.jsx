@@ -7,7 +7,13 @@ export default class SiteDetail extends React.Component {
   constructor(props) {
     super(props);
   }
-
+  componentWillMount() {
+    this.setState({lastMap: this.props.currMap});
+    this.props.setCurrMap('singleSite');
+  }
+  componentWillUnmount() {
+    this.props.setCurrMap(this.state.lastMap);  // this fires even when it should be keeping it for a single map view.
+  }
   render() {
     const site = this.props.currSite;
     let hashTags;
@@ -61,6 +67,12 @@ SiteDetail.propTypes = {
   currSite: React.PropTypes.object.isRequired,
   params: React.PropTypes.object.isRequired,
   getCurrSite: React.PropTypes.func.isRequired,
+  setCurrMap: React.PropTypes.func.isRequired,
+  currMap: React.PropTypes.string.isRequired,
   convertToAddress: React.PropTypes.func.isRequired,
   address: React.PropTypes.func.isRequired,
+};
+
+SiteDetail.contextTypes = {
+  router: React.PropTypes.func.isRequired,
 };

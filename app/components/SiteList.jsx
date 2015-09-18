@@ -11,10 +11,8 @@ export default class SiteList extends React.Component {
   }
 
   siteDetailClick(event) {
-    const router = this.context.router;
     this.props.getCurrSite(event.target.dataset.route);
-    this.props.setCurrMap('singleSite');
-    router.transitionTo('sites-detail', { siteId: event.target.dataset.route });
+    this.context.router.transitionTo('sites-detail', { siteId: event.target.dataset.route });
   }
 
   render() {
