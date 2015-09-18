@@ -1,4 +1,7 @@
 @import "../utils/config";
 
-.NearbySection { flex: 1; overflow-y: scroll; }
-.NearbySection img { max-width: 100%; }
+.NearbySection { flex: 1; overflow-y: scroll; position: relative; flex-direction: column; display: flex; }
+.NearbySection__NearbyList--hidden { display:none; }
+
+// .SiteSection { flex: 1; overflow-y: scroll; position: relative; flex-direction: column; display: flex; }
+// .SiteSection__SiteList--hidden { display:none; }
