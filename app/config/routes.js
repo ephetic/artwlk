@@ -22,15 +22,15 @@ import {Route, DefaultRoute, NotFoundRoute} from 'react-router';
 
 export default (
   <Route name="app" path="/" handler={Container}>
-  {/*
     <Route name="nearby" handler={NearbySection} >
       <Route name="nearby-list" handler={NearbyList} />
       <Route name="map" path="/nearby/map" handler={MapMap} />
       <DefaultRoute handler={NearbyList} />
     </Route>
-    */}
+    {/*
     <Route name="nearby" handler={NearbySection} />
     <Route name="map" path="/nearby/map" handler={MapMap} />
+    */}
     <Route name="tours" path="/tours" handler={TourSection}>
       <Route name="map-tours" path="/tours/map" handler={MapMap} />
       <Route name="map-tour" path="/tours/map/:tourId" handler={MapMap} />

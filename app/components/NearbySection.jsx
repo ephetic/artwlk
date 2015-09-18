@@ -1,11 +1,11 @@
 import React from 'react';
-// import {RouteHandler} from 'react-router';
+import {RouteHandler} from 'react-router';
 import TopBarSection from './TopBarSection';
 import Modal from 'react-modal';
 import FilterSection from './FilterSection';
 import SearchSection from './SearchSection';
-import SiteList from './SiteList';
-import TourList from './TourList';
+// import SiteList from './SiteList';
+// import TourList from './TourList';
 
 // styles
 import '../styles/components/NearbySection';
@@ -63,12 +63,11 @@ export default class NearbySection extends React.Component {
           <button onClick={this.routeTo.bind(this, 'sites')}>Sites</button>
         </div>
 
-          {/*
           <RouteHandler
             {...this.state}
             {...this.props}
           />
-          */}
+          {/*
           <h2>Sites</h2>
           <SiteList
             limit="2"
@@ -81,6 +80,7 @@ export default class NearbySection extends React.Component {
             {...this.state}
             {...this.props}
           />
+          */}
           <Modal
             isOpen={this.state.modalIsOpen}
             onRequestClose={this.closeModal}
