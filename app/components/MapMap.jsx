@@ -30,12 +30,10 @@ export default class MapMap extends React.Component {
   }
 
   onComponentDidMount() {
-    console.log('onComponentDidMount');
     this.renderMap(this.props);
   }
 
   onComponentWillMount() {
-    console.log('onComponentWillMount');
     this.renderMap(this.props);
   }
 
@@ -48,7 +46,12 @@ export default class MapMap extends React.Component {
     }
     if (route.path.match('nearby') || route.path.match('tours')) {
       const tours = route.paramNames.indexOf('tourId') !== -1 ? [props.currTour] : props.tours;
-      this.setState({directions: []}, () => tours.forEach(this.renderSingleTour));
+      // this.setState({directions: []}, () => tours.forEach(this.renderSingleTour));
+      tours.filter(x => {
+        if (this.props.tours.indexOf(x) === -1) {
+          return x;
+        }
+      }).forEach(t => this.renderSingleTour(t));
     }
     // if (props.currMap === 'all' || props.currMap === 'allSites' || props.currMap === 'singleSite') {
     //   const sites = props.currMap === 'singleSite' ? [props.currSite] : props.sites;
@@ -81,7 +84,8 @@ export default class MapMap extends React.Component {
     );
   }
 
-  renderSingleTour(tour) {
+  renderSingleTour(tour, retry) {
+    const retries = retry || 0;
     const DirectionsService = new google.maps.DirectionsService();
     const route = tour.sites.map((siteObj) => {
       const {latitude, longitude} = siteObj.coords;
@@ -106,7 +110,8 @@ export default class MapMap extends React.Component {
           directions: this.state.directions.concat(<DirectionsRenderer directions={result} />),
         });
       } else {
-        console.log(`error fetching directions ${ status }`);  // eslint-disable-line no-console
+        if (retries < 10) setTimeout(() => this.renderSingleTour(tour, retries + 1), 500 * retries * Math.random());
+        console.log(`error fetching directions ${ tour.title }`, 'retries', retries);  // eslint-disable-line no-console
       }
     });
   }

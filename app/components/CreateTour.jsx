@@ -64,11 +64,11 @@ export default class CreateTour extends React.Component {
         <h1>Create Tour</h1>
         <label>
           Title
-          <input type="text" ref="title" defaultValue={this.props.tourFormData.title} />
+          <input type="text" ref="title" defaultValue={this.props.tourFormData && this.props.tourFormData.title} />
         </label>
         <label>
           Description
-          <input type="text" ref="description" defaultValue={this.props.tourFormData.description} />
+          <input type="text" ref="description" defaultValue={this.props.tourFormData && this.props.tourFormData.description} />
         </label>
         <ul>
           {list}
@@ -80,14 +80,14 @@ export default class CreateTour extends React.Component {
   }
 }
 
+CreateTour.contextTypes = {
+  router: React.PropTypes.func.isRequired,
+};
+
 CreateTour.propTypes = {
   selectedSites: React.PropTypes.array.isRequired,
   reorderSites: React.PropTypes.func.isRequired,
   saveTourFormData: React.PropTypes.func.isRequired,
   tourFormData: React.PropTypes.object.isRequired,
   selectSites: React.PropTypes.func.isRequired,
-};
-
-CreateTour.contextTypes = {
-  router: React.PropTypes.func.isRequired,
 };
